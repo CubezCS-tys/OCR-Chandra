@@ -21,6 +21,44 @@ api_key = os.getenv("DATALAB_API_KEY")
 # If you want to hardcode the API key, uncomment the line below and replace with your key:
 # api_key = "your_api_key_here"
 
+# Authentication
+if 'authenticated' not in st.session_state:
+    st.session_state.authenticated = False
+
+def check_password():
+    """Returns `True` if the user had the correct password."""
+
+    def password_entered():
+        """Checks whether a password entered by the user is correct."""
+        if st.session_state["username"] == "ai" and st.session_state["password"] == "Ai#test2025":
+            st.session_state.authenticated = True
+            del st.session_state["password"]  # don't store password
+            del st.session_state["username"]
+        else:
+            st.session_state.authenticated = False
+
+    if st.session_state.authenticated:
+        return True
+
+    # Center the login form
+    col1, col2, col3 = st.columns([1, 2, 1])
+    
+    with col2:
+        st.markdown("<h1 style='text-align: center;'>🔒 Login Required</h1>", unsafe_allow_html=True)
+        st.markdown("<p style='text-align: center;'>Please enter your credentials to access the OCR Tool.</p>", unsafe_allow_html=True)
+        st.divider()
+        st.text_input("Username", key="username")
+        st.text_input("Password", type="password", key="password")
+        if st.button("Login", on_click=password_entered, type="primary", use_container_width=True):
+            if not st.session_state.authenticated:
+                st.error("😕 Incorrect username or password")
+        st.divider()
+        
+    return False
+
+if not check_password():
+    st.stop()
+
 if not api_key:
     st.error("❌ DATALAB_API_KEY environment variable not found. Please set it in your .env file or environment.")
     st.stop()
