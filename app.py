@@ -3,6 +3,10 @@ import os
 import tempfile
 from pathlib import Path
 import base64
+import fitz  # PyMuPDF
+from PIL import Image
+import io
+import re
 from process_with_datalab import process_pdf_with_datalab
 from md_to_pdf import convert_md_to_pdf
 from md_to_html import convert_md_to_html
@@ -78,7 +82,15 @@ if 'html_content' not in st.session_state:
 if 'base_name' not in st.session_state:
     st.session_state.base_name = "output"
 
-# Removed display_pdf function as we use pdf_viewer directly
+def render_pdf_as_images(pdf_bytes):
+    """Render PDF pages as images using PyMuPDF"""
+    doc = fitz.open(stream=pdf_bytes, filetype="pdf")
+    images = []
+    for page in doc:
+        pix = page.get_pixmap(dpi=150)  # 150 DPI for good balance of quality/speed
+        img_data = pix.tobytes("png")
+        images.append(img_data)
+    return images
 
 uploaded_file = st.file_uploader("Choose a PDF file", type="pdf")
 
@@ -131,10 +143,6 @@ if uploaded_file is not None:
                             st.session_state.generated_pdf_data = f.read()
 
                         # Embed images in Markdown for Preview and HTML for Download
-                        # This ensures they show up in Streamlit and in the downloaded HTML
-                        import re
-                        import base64
-                        
                         def image_to_base64(match):
                             img_path = match.group(2)
                             # Resolve path relative to output_dir
@@ -159,11 +167,9 @@ if uploaded_file is not None:
                             return match.group(0)
 
                         # Fix Markdown for Preview
-                        # Pattern: ![alt](path)
                         st.session_state.md_content = re.sub(r'!\[([^\]]*)\]\(([^\)]+)\)', image_to_base64, md_content)
                         
                         # Fix HTML for Download
-                        # Pattern: src="path"
                         st.session_state.html_content = re.sub(r'src="([^"]+)"', html_image_to_base64, html_content)
                             
                         st.session_state.processed = True
@@ -210,9 +216,15 @@ if st.session_state.processed:
     with col_left:
         st.markdown("### Original PDF")
         if st.session_state.original_pdf_data:
-            pdf_viewer(input=st.session_state.original_pdf_data, height=800)
+            try:
+                pdf_viewer(input=st.session_state.original_pdf_data, height=800)
+            except Exception as e:
+                st.error(f"Error rendering original PDF: {e}")
             
     with col_right:
         st.markdown("### Generated PDF")
         if st.session_state.generated_pdf_data:
-            pdf_viewer(input=st.session_state.generated_pdf_data, height=800)
+            try:
+                pdf_viewer(input=st.session_state.generated_pdf_data, height=800)
+            except Exception as e:
+                st.error(f"Error rendering generated PDF: {e}")
