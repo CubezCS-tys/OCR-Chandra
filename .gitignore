@@ -1,0 +1,6 @@
+.env
+.venv
+chandra_output/
+datalab_output/
+datalab_output_*/
+__pycache__

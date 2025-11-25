@@ -1,0 +1,14 @@
+paddlepaddle
+paddleocr>=2.7.0
+pdf2image
+python-docx
+reportlab
+PyMuPDF
+arabic-reshaper
+python-bidi
+streamlit
+python-dotenv
+markdown
+weasyprint
+latex2mathml
+requests
