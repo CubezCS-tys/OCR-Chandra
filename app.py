@@ -210,9 +210,9 @@ if st.session_state.processed:
     with col_left:
         st.markdown("### Original PDF")
         if st.session_state.original_pdf_data:
-            pdf_viewer(input=st.session_state.original_pdf_data, width=700, height=800)
+            pdf_viewer(input=st.session_state.original_pdf_data, height=800)
             
     with col_right:
         st.markdown("### Generated PDF")
         if st.session_state.generated_pdf_data:
-            pdf_viewer(input=st.session_state.generated_pdf_data, width=700, height=800)
+            pdf_viewer(input=st.session_state.generated_pdf_data, height=800)
