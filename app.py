@@ -7,6 +7,7 @@ from process_with_datalab import process_pdf_with_datalab
 from md_to_pdf import convert_md_to_pdf
 from md_to_html import convert_md_to_html
 from dotenv import load_dotenv
+from streamlit_pdf_viewer import pdf_viewer
 
 # Load environment variables
 load_dotenv()
@@ -77,11 +78,7 @@ if 'html_content' not in st.session_state:
 if 'base_name' not in st.session_state:
     st.session_state.base_name = "output"
 
-def display_pdf(pdf_data):
-    """Display PDF in an iframe"""
-    base64_pdf = base64.b64encode(pdf_data).decode('utf-8')
-    pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="100%" height="800" type="application/pdf"></iframe>'
-    st.markdown(pdf_display, unsafe_allow_html=True)
+# Removed display_pdf function as we use pdf_viewer directly
 
 uploaded_file = st.file_uploader("Choose a PDF file", type="pdf")
 
@@ -213,9 +210,9 @@ if st.session_state.processed:
     with col_left:
         st.markdown("### Original PDF")
         if st.session_state.original_pdf_data:
-            display_pdf(st.session_state.original_pdf_data)
+            pdf_viewer(input=st.session_state.original_pdf_data, width=700, height=800)
             
     with col_right:
         st.markdown("### Generated PDF")
         if st.session_state.generated_pdf_data:
-            display_pdf(st.session_state.generated_pdf_data)
+            pdf_viewer(input=st.session_state.generated_pdf_data, width=700, height=800)

@@ -12,3 +12,4 @@ markdown
 weasyprint
 latex2mathml
 requests
+streamlit-pdf-viewer
