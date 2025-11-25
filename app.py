@@ -217,7 +217,7 @@ if st.session_state.processed:
         st.markdown("### Original PDF")
         if st.session_state.original_pdf_data:
             try:
-                pdf_viewer(input=st.session_state.original_pdf_data, height=800)
+                pdf_viewer(input=st.session_state.original_pdf_data, height=800, key="original_pdf_viewer")
             except Exception as e:
                 st.error(f"Error rendering original PDF: {e}")
             
@@ -225,6 +225,6 @@ if st.session_state.processed:
         st.markdown("### Generated PDF")
         if st.session_state.generated_pdf_data:
             try:
-                pdf_viewer(input=st.session_state.generated_pdf_data, height=800)
+                pdf_viewer(input=st.session_state.generated_pdf_data, height=800, key="generated_pdf_viewer")
             except Exception as e:
                 st.error(f"Error rendering generated PDF: {e}")
